@@ -11,12 +11,19 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang llvm make zip git curl
+          sudo apt-get install -y clang llvm make zip git curl Build-essential
 
       - name: Setup Theos Environment
         run: |
           bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
           echo "THEOS=~/theos" >> $GITHUB_ENV
+
+      - name: Install iOS Toolchain for Linux
+        run: |
+          mkdir -p ~/theos/toolchain/linux/iphone
+          curl -LO https://github.com/theos/toolchain/releases/download/linux-x86_64/toolchain-linux-x86_64.tar.gz
+          tar -xf toolchain-linux-x86_64.tar.gz -C ~/theos/toolchain/linux/iphone/
+          rm toolchain-linux-x86_64.tar.gz
 
       - name: Download iOS SDK
         run: |
