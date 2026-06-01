@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install System Dependencies
         run: |
@@ -33,7 +33,7 @@ jobs:
           make FINALPACKAGE=1 ARCHS=arm64 Messages=0
 
       - name: Upload Dynamic Library
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LocationTest-Dylib
           path: .theos/obj/arm64/*.dylib
