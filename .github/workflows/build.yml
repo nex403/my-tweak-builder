@@ -1,32 +1,19 @@
 name: Build Tweak
 on: [workflow_dispatch, push]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang llvm make zip git curl build-essential
 
       - name: Setup Theos Environment
         run: |
           bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
           echo "THEOS=~/theos" >> $GITHUB_ENV
 
-      - name: Configure Theos Compiler Link
-        run: |
-          mkdir -p ~/theos/toolchain/linux/iphone/bin
-          ln -sf $(which clang) ~/theos/toolchain/linux/iphone/bin/clang
-
-      - name: Download iOS SDK (Lightweight)
+      - name: Download iOS SDK
         run: |
           git clone --depth=1 https://github.com/theos/sdks.git ~/theos/sdks
 
