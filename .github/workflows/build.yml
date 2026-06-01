@@ -1,13 +1,17 @@
-```yaml
 name: Build Tweak
-on: [workflow_dispatch]
+on: [workflow_dispatch, push]
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang llvm make zip git curl
 
       - name: Setup Theos Environment
         run: |
@@ -21,7 +25,7 @@ jobs:
       - name: Compile Dylib
         run: |
           export THEOS=~/theos
-          make FINALPACKAGE=1 ARCHS=arm64
+          make FINALPACKAGE=1 ARCHS=arm64 Messages=0
 
       - name: Upload Dynamic Library
         uses: actions/upload-artifact@v3
