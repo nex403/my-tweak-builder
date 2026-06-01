@@ -1,6 +1,9 @@
 name: Build Tweak
 on: [workflow_dispatch, push]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,9 +26,9 @@ jobs:
           mkdir -p ~/theos/toolchain/linux/iphone/bin
           ln -sf $(which clang) ~/theos/toolchain/linux/iphone/bin/clang
 
-      - name: Download iOS SDK
+      - name: Download iOS SDK (Lightweight)
         run: |
-          git clone https://github.com/theos/sdks.git ~/theos/sdks
+          git clone --depth=1 https://github.com/theos/sdks.git ~/theos/sdks
 
       - name: Compile Dylib
         run: |
