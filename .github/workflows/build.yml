@@ -2,8 +2,8 @@ name: Build Hidden iOS Dylib
 
 on:
   push:
-    branches: [ "**" ] # يعمل على أي فرع تقوم بالحفظ فيه تلقائياً
-  workflow_dispatch:   # يتيح لك التشغيل اليدوي بضغطة زر
+    branches: [ "**" ]
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -15,7 +15,6 @@ jobs:
 
     - name: Compile Dylib for iOS (ARM64)
       run: |
-        # أمر الترجمة الرسمي لمعمارية الآيفون الحديثة باستخدام مكتبات النظام الأساسية
         xcrun --sdk iphoneos clang -dynamiclib -arch arm64 \
           -framework Foundation -framework CoreLocation \
           interpose.m -o AppNetworkCore.dylib
