@@ -1,29 +1,27 @@
-name: Build Tweak
-on: [workflow_dispatch, push]
+name: Build Hidden iOS Dylib
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # يتيح لك هذا الخيار تشغيل البناء يدوياً بضغطة زر
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-latest # استخدام سيرفر ماك رسمي من GitHub للترجمة
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Setup Theos Environment
-        run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
-          echo "THEOS=~/theos" >> $GITHUB_ENV
-
-      - name: Download iOS SDK
-        run: |
-          git clone --depth=1 https://github.com/theos/sdks.git ~/theos/sdks
-
-      - name: Compile Dylib
-        run: |
-          export THEOS=~/theos
-          make FINALPACKAGE=1 ARCHS=arm64 Messages=0
-
-      - name: Upload Dynamic Library
-        uses: actions/upload-artifact@v4
-        with:
-          name: LocationTest-Dylib
-          path: .theos/obj/arm64/*.dylib
+    - name: Compile Dylib for iOS (ARM64)
+      run: |
+        # استخدام مترجم آبل الرسمي (clang) لبناء المكتبة لمعمارية arm64
+        xcrun --sdk iphoneos clang -dynamiclib -arch arm64 \
+          -framework Foundation -framework CoreLocation \
+          interpose.m -o AppNetworkCore.dylib
+          
+    - name: Upload Finished Dylib
+      uses: actions/upload-artifact@v4
+      with:
+        name: Hidden-Location-Dylib
+        path: AppNetworkCore.dylib
