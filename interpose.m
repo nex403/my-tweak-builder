@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import <objc/runtime.h>
 
 // تعريف هيكل البيانات القياسي لـ DYLD Interposing
 typedef struct dyld_interpose_tuple {
@@ -19,8 +20,10 @@ CLLocationCoordinate2D my_coordinate(CLLocation *self, SEL _cmd) {
     return fakeCoord;
 }
 
-// مصفوفة الـ Interpose الرسمية المتوافقة مع معايير آبل للترجمة المباشرة
-__attribute__((used)) static const dyld_interpose_tuple interposing_map[] \
-__attribute__((section("__DATA,__interpose"))) = {
-    { (const void*)my_coordinate, (const void*)-[CLLocation coordinate] }
-};
+// دالة تهيئة برمجية للحصول على الدالة الأصلية بشكل يقبله المترجم فوراً
+__attribute__((constructor)) static void initialize() {
+    Method originalMethod = class_getInstanceMethod([CLLocation class], @selector(coordinate));
+    if (originalMethod) {
+        method_setImplementation(originalMethod, (IMP)my_coordinate);
+    }
+}
